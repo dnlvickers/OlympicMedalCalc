@@ -1,0 +1,1 @@
+This python script generates the probability of landing on the podium of the 2020 Olympics in climbing given a certain score. To run this code yourself, you need to `pip install matplotlib` as matplotlib is the only dependency.
