@@ -9,11 +9,11 @@ def generate_array(n=20):
     return array
 
 
-def generate_points(numEvents=3):
+def generate_points(numEvents=3, numClimbers=8):
     # generate random array of events placements
     events = []
     for i in range(numEvents):
-        events.append(generate_array(20))
+        events.append(generate_array(numClimbers))
         random.shuffle(events[-1])
 
     # calculate each climbers score based on those placements
@@ -52,7 +52,7 @@ def format_data(data):
     return {'scores': scores, 'gold': gold, 'silver': silver, 'bronze': bronze, 'medal': medal}
 
 
-def generate_plot(data):
+def generate_plot(data, ylimit=100):
     # plots and saves the data
     plt.figure()
     plt.plot(data['scores'], data['gold'], linewidth=2, color='#d4af37')
@@ -60,24 +60,26 @@ def generate_plot(data):
     plt.plot(data['scores'], data['bronze'], linewidth=2, color='#cd7f32')
     plt.plot(data['scores'], data['medal'], linewidth=2, color='black')
 
-    plt.xlim([0, 250])
+    plt.xlim([0, ylimit])
     plt.ylim([0, 1.01])
 
     plt.xlabel('Combined Score')
     plt.ylabel('Normalized Probability')
+    plt.legend(['Gold', 'Silver', 'Bronze', 'Podium'])
+    plt.title('Podium Probability vs. Score at 2020 Tokyo Olympics in Climbing')
 
     plt.savefig('OlympicMedals.png')
     plt.show()
 
 
-def main(samples=100, numEvents=3):
+def main(samples=100, numEvents=3, numClimbers=8):
     print("Generating plot with", samples, "samples")
 
     totals = {}
     for i in range(samples):
         if i % int(samples/100) == 0:
             print('Processed', 100*i/samples, 'percent of the data')
-        points = generate_points(numEvents)
+        points = generate_points(numEvents, numClimbers)
 
         # find the first, second, and third placements from those
         podium = get_podium(points)
@@ -93,8 +95,8 @@ def main(samples=100, numEvents=3):
         totals[podium[2]]['bronze'] += 1
 
     data = format_data(totals)
-    generate_plot(data)
+    generate_plot(data, 100)
 
 
 if __name__ == '__main__':
-    main(10**7, 3)
+    main(10**7, 3, 8)
